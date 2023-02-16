@@ -7,7 +7,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 
-
 const port = process.env.APP_PORT;// PORT 9753
 app.use(bodyParser.json({ limit: "50mb" }));
 
@@ -44,8 +43,9 @@ const RouterInv = require('./routers/inv/inv');
 const RouterAuth = require('./routers/auth/auth');
 const RouterBorrow = require('./routers/borrow/borrow');
 const RouterCategory = require('./routers/category/cate');
+const RouterAdmin= require('./routers/admin/admin');
 app.use("/api/auth", RouterAuth);
-app.use('/api' ,[RouterAdduser,RouterInv,RouterAuth,RouterBorrow,RouterCategory] );
+app.use('/api' ,[RouterAdduser,RouterInv,RouterAuth,RouterBorrow,RouterCategory,RouterAdmin] );
 
 
 

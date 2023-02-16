@@ -1,12 +1,93 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../db');
+const multer = require('multer');
+var profile_path = "";
+const imageUploadPath = "../Frontend/assets/images";
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null,imageUploadPath);
+    },
+    filename: function (req, file, cb) {
+      cb(null,`${file.originalname}`);
+      images=`${file.originalname}`;
+    },
+  });
+
+const imageUpload = multer({ storage: storage });
+
+router.post('/upload', imageUpload.single("file"),(req, res) => {
+    const name = req.body.i_name;
+        const qty = parseInt(req.body.i_qty);
+        const cate = req.body.c_id;
+    //no img
+    if(!req.file){
+        if( !name || !qty || !cate ){
+            return res.status(400).send({message: 'Please enter All Data'})
+        }
+        console.log(req.file)
+        try {
+            db.query(
+                `INSERT INTO inventory (i_name,i_category,i_qty) VALUES ('${name}','${ cate}','${ qty}') `,
+                (err,results)=>{
+                    if(err){
+                        console.log("Can't insert Equipment",err);
+                        return res.status(400);
+                    }
+                    return res.status(201).send({
+                        message: 'INSERT Equipment Success!'
+                      })
+                }
+            )
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send();
+        }
+    }
+        if( !name || !qty || !cate){
+            return res.status(400).send({message: 'Please enter All Data'})
+        }
+        try {
+            db.query(
+                `INSERT INTO inventory (i_name,i_category,i_qty,i_img) VALUES ('${name}','${ cate}','${ qty}','${images}') `,
+                (err,results)=>{
+                    if(err){
+                        console.log("Can't insert Equipment",err);
+                        return res.status(400);
+                    }
+                    return res.status(201).send({
+                        message: 'INSERT Equipment AND images Success!'
+                      })
+                }
+            )
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send();
+        }
+  })
 
 router.get('/inv',(req,res)=>{
     db.query(`SELECT * FROM inventory `,
     (err,data)=>{
         if(err){
             return res.status(400);
+        }else{
+            return res.status(201).send(
+                data,
+                { total:data.length}
+            )
+        }
+    })   
+  });
+ // SELECT * FROM inventory WHERE c_id
+  router.get('/inv/cate/:c_id',(req,res)=>{
+    const id = req.params.c_id;
+    console.log(id);
+    db.query(`SELECT * FROM inventory  WHERE i_category = ${id}`,
+    (err,data)=>{
+        if(err){
+            return res.status(400).send({message: 'Nodata'});
         }else{
             return res.status(201).send(
                 data,

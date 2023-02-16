@@ -22,16 +22,22 @@ router.post('/login', userMiddleware.validateRegister,  (req, res, next) => {
         } else {
           if (result.length === 0) {
             return res.status(404).send({
-              msg: 'Email or Password wrong '
+              message: 'Email or Password wrong '
             })
           } else {
             const userData = {
             email: result[0].email,
               username: result[0].username,
+              firstname: result[0].firstname,
               lastname: result[0].lastname,
               password: result[0].password,
               u_stat: result[0].u_stat,
               u_id: result[0].u_id
+            }
+            if(userData.u_stat == 'NotApproved'){
+              return res.status(403).send({
+                message: 'Require Admin To Approved'
+              })
             }
             const secret = process.env.ACCESS_TOKEN_SECRET
             const options = {

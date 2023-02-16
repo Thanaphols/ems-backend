@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../db');
-
 //เรียกข้อมูล User ทั้งหมด
 router.get('/users',(req,res)=>{
     db.query(`SELECT * FROM user `,

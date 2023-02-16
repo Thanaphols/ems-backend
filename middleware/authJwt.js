@@ -27,27 +27,24 @@ verifyToken = (req, res, next) => {
   })
 }
 
-isAdmin = async (req, res, next) => {
+isApp = async (req, res, next) => {
+ console.log( req.u_stat)
   try {
-    if (
-      req.user.role_name === 'Admin' ||
-      req.user.role_name === 'NotApproved' ||
-      req.user.role_name === 'Approved'
-    ) {
+    if ( req.u_stat === 'NotApproved'  ) {
       return next()
     }
     return res.status(403).send({
-      message: 'Require Admin Role!'
+      message: 'Require Admin To Approved'
     })
   } catch (error) {
     return res.status(500).send({
-      message: 'Unable to validate User role!'
+      message: 'Unable to validate User role!',
     })
   }
 }
 
 const authJwt = {
   verifyToken,
-  isAdmin,
+  isApp,
 }
 module.exports = authJwt
