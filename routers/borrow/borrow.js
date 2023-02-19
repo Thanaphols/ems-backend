@@ -105,6 +105,9 @@ router.get('/borrow',(req,res)=>{
     if( !u_stat ||!u_id || !i_id ||  !i_cate || !i_qty || !qty){
         return res.status(400).send({ message: "Please enter All data" })
     }
+    if(i_qty < 0){
+        return res.status(400).send({ message: "Please fill Quantity  more than 0" })
+    }
     if(total < 0){
             return res.status(400).send({ message: "Out of Stock" })
         }
@@ -116,7 +119,7 @@ router.get('/borrow',(req,res)=>{
                         console.log(err);
                         return res.status(400).send({message: "Can't borrow something wrong"},err);
                     }
-                    return res.status(201).send({message: "Send Request Success Please Wait"})
+                    return res.status(201).send({message: "Send Request Success"})
                 }
             )
         

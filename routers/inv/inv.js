@@ -30,13 +30,34 @@ router.post('/upload', imageUpload.single("file"),(req, res) => {
         try {
             db.query(
                 `INSERT INTO inventory (i_name,i_category,i_qty) VALUES ('${name}','${ cate}','${ qty}') `,
-                (err,results)=>{
+                (err,data)=>{
                     if(err){
                         console.log("Can't insert Equipment",err);
-                        return res.status(400);
+                        return res.status(400).send({message:"Can't insert Equipment"});
+                    }
+                    return res.status(201).send(data,{
+                        message: 'INSERT Equipment Success!'
+                      })
+                }
+            )
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({message: 'Something went wrong'});
+        }
+    }else{
+        if( !name || !qty || !cate){
+            return res.status(400).send({message: 'Please enter All Data'})
+        }
+        try {
+            db.query(
+                `INSERT INTO inventory (i_name,i_category,i_qty,i_img) VALUES ('${name}','${ cate}','${ qty}','${images}') `,
+                (err,data)=>{
+                    if(err){
+                        console.log("Can't insert Equipment",err);
+                        return res.status(400).send({message: 'Something went wrong'});
                     }
                     return res.status(201).send({
-                        message: 'INSERT Equipment Success!'
+                        data, message: 'INSERT Equipment AND images Success!'
                       })
                 }
             )
@@ -45,33 +66,14 @@ router.post('/upload', imageUpload.single("file"),(req, res) => {
             return res.status(500).send();
         }
     }
-        if( !name || !qty || !cate){
-            return res.status(400).send({message: 'Please enter All Data'})
-        }
-        try {
-            db.query(
-                `INSERT INTO inventory (i_name,i_category,i_qty,i_img) VALUES ('${name}','${ cate}','${ qty}','${images}') `,
-                (err,results)=>{
-                    if(err){
-                        console.log("Can't insert Equipment",err);
-                        return res.status(400);
-                    }
-                    return res.status(201).send({
-                        data,
-                        message: 'INSERT Equipment AND images Success!'
-                      })
-                }
-            )
-        } catch (error) {
-            console.log(error);
-            return res.status(500).send();
-        }
+        
   })
 
   router.patch('/upEq/:e_id', imageUpload.single("file"),(req, res) => {
     const id = req.params.e_id;
     const name = req.body.i_name;
         const qty = parseInt(req.body.i_qty);
+        
         const cate = req.body.c_id;
     // no img
     if(!req.file){
