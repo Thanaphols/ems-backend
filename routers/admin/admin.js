@@ -78,26 +78,8 @@ router.get('/admin/admin',(req,res) => {
 // Admin  Update user Where id && uesr Status
 router.patch('/admin/adupUser/:u_id', async (req,res) => {
     
-    const { email,username,firstname,lastname,password,u_stat } = req.body;
+    const { email,username,firstname,lastname,u_stat } = req.body;
     const id = req.params.u_id;
-
-    if(!password){
-        try {
-            db.query(`Update user SET email = '${email}',username = '${username}',firstname = '${firstname}',
-            lastname = '${lastname}', u_stat = '${u_stat}' WHERE u_id = '${id}' `,
-            (err)=>{
-                if(err){
-                    console.log("Cann't Update Data",err);                
-                    return res.status(400).send();
-                }
-                    return res.status(201).json({message: "Update user Success "});
-                }
-            )
-        } catch (error) {
-            console.log(error);
-            return res.status(500).send();
-        }
-    }else{
         try {
             db.query(`Update user SET email = '${email}',username = '${username}',firstname = '${firstname}',
             lastname = '${lastname}', u_stat = '${u_stat}' WHERE u_id = '${id}' `,            
@@ -113,7 +95,7 @@ router.patch('/admin/adupUser/:u_id', async (req,res) => {
             console.log(error);
             return res.status(500).send();
         }
-    }
+    
 
    
 })
@@ -259,6 +241,36 @@ router.delete(`/admin/deInv/:id`,(req,res)=>{
                 }
             })
     })
+    
+})
+// Admin delete Uesr AND CHECK User Borrow OR return or wait list
+router.delete(`/admin/deUser/:id`,(req,res)=>{
+    const id = req.params.id;
+    console.log(id)
+    db.query(`SELECT b_id FROM borrow WHERE u_id = ${id} `,(err,data)=>{
+        if(err){
+            console.log(err)
+        }
+        if(data.length !=0){
+            return res.status(400).send({message: " Can't Delete user " })
+        }else{
+            db.query(`delete from user where u_id = ${id} `,
+        (err,result)=>{
+        if(err){
+           return res.status(400).send({
+                code: err.code,
+                message: err.message
+            })
+        }else{
+            return res.status(200).send({
+                message: 'Delete User Success',
+                
+            },console.log(id))
+        }
+    })
+        }
+        
+})
     
 })
 
