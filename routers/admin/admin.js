@@ -2,6 +2,79 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../db');
 
+// quantity
+router.get('/admin/allqty',(req,res) => {
+    db.query(`SELECT i_qty FROM inventory `,(err,data)=>{
+        if(err){
+            return  res.status(400).send({message:"No data quantity"})
+        }
+            return res.status(201).send(data,{message:"Send all quantity Successfully"})
+    })
+})
+
+router.get('/admin/borrowqty',(req,res) => {
+    db.query(`SELECT b_qty FROM borrow WHERE b_stat = "Borrow" `,(err,data)=>{
+        if(err){
+            return  res.status(400).send({message:"No data quantity"})
+        }
+            return res.status(201).send(data,{message:"Send all quantity of Borrowing Successfully"})
+    })
+})
+
+router.get('/admin/BorAndRe',(req,res) => {
+    db.query(`SELECT b_id FROM borrow WHERE b_stat = "Borrow" OR b_stat = "return" `,(err,data)=>{
+        if(err){
+            return  res.status(400).send({message:"No data quantity"})
+        }
+            return res.status(201).send(data,{message:"Send all quantity of Borrowing Successfully"})
+    })
+})
+
+router.get('/admin/Wait',(req,res) => {
+    db.query(`SELECT b_id FROM borrow WHERE b_stat = "wait" `,(err,data)=>{
+        if(err){
+            return  res.status(400).send({message:"No data quantity"})
+        }
+            return res.status(201).send(data,{message:"Send all quantity of Borrowing Successfully"})
+    })
+})
+
+router.get('/admin/Cate',(req,res) => {
+    db.query(`SELECT c_id FROM category  `,(err,data)=>{
+        if(err){
+            return  res.status(400).send({message:"No data category"})
+        }
+            return res.status(201).send(data,{message:"Send all category Successfully"})
+    })
+})
+
+router.get('/admin/alluser',(req,res) => {
+    db.query(`SELECT u_id FROM user  `,(err,data)=>{
+        if(err){
+            return  res.status(400).send({message:"No data user"})
+        }
+            return res.status(201).send(data,{message:"Send all user Successfully"})
+    })
+})
+
+router.get('/admin/notuser',(req,res) => {
+    db.query(`SELECT u_id FROM user WHERE u_stat = "NotApproved"  `,(err,data)=>{
+        if(err){
+            return  res.status(400).send({message:"No data user"})
+        }
+            return res.status(201).send(data,{message:"Send all user Successfully"})
+    })
+})
+
+router.get('/admin/admin',(req,res) => {
+    db.query(`SELECT u_id FROM user WHERE u_stat = "Admin"  `,(err,data)=>{
+        if(err){
+            return  res.status(400).send({message:"No data Admin"})
+        }
+            return res.status(201).send(data,{message:"Send all Admin Successfully"})
+    })
+})
+
 // Admin  Update user Where id && uesr Status
 router.patch('/admin/adupUser/:u_id', async (req,res) => {
     

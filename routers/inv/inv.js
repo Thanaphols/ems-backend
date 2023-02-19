@@ -57,6 +57,7 @@ router.post('/upload', imageUpload.single("file"),(req, res) => {
                         return res.status(400);
                     }
                     return res.status(201).send({
+                        data,
                         message: 'INSERT Equipment AND images Success!'
                       })
                 }
@@ -65,6 +66,63 @@ router.post('/upload', imageUpload.single("file"),(req, res) => {
             console.log(error);
             return res.status(500).send();
         }
+  })
+
+  router.patch('/upEq/:e_id', imageUpload.single("file"),(req, res) => {
+    const id = req.params.e_id;
+    const name = req.body.i_name;
+        const qty = parseInt(req.body.i_qty);
+        const cate = req.body.c_id;
+    // no img
+    if(!req.file){
+        if( !name || !qty || !cate ){
+            return res.status(400).send({message: 'Please enter All Data'})
+        }
+        
+        try {
+            db.query(
+                `UPDATE inventory SET i_name = '${name}',i_category = ${cate} ,i_qty = ${qty} 
+                 WHERE i_id = ${id}`,
+                (err,data)=>{
+                    if(err){
+                        console.log("Can't Update Equipment",err);
+                        return res.status(400).send({message:"Can't Update Equipment "});
+                    }
+                    return res.status(201).send({
+                        data,
+                        message: 'Update Equipment Success!'
+                      })
+                }
+            )
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({message:"Can't Update Equipment "});
+        }
+    }else{
+        if( !name || !qty || !cate){
+            return res.status(400).send({message: 'Please enter All Data'})
+        }
+        try {
+            db.query(
+                `UPDATE inventory SET i_name = '${name}',i_category = ${cate},i_img = '${images}'
+                WHERE i_id = ${id} `,
+                (err,data)=>{
+                    if(err){
+                        console.log("Can't Update Equipment",err);
+                        return res.status(400).send({message:"Can't Update Equipment images"});
+                    }
+                    return res.status(201).send({
+                        data,
+                        message: 'Update Equipment AND images Success!'
+                      })
+                }
+            )
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({message:"Can't Update Equipment image "});
+        }
+    }
+        
   })
 
 router.get('/inv',(req,res)=>{
@@ -83,7 +141,6 @@ router.get('/inv',(req,res)=>{
  // SELECT * FROM inventory WHERE c_id
   router.get('/inv/cate/:c_id',(req,res)=>{
     const id = req.params.c_id;
-    console.log(id);
     db.query(`SELECT * FROM inventory  WHERE i_category = ${id}`,
     (err,data)=>{
         if(err){
@@ -117,7 +174,8 @@ router.get('/inv',(req,res)=>{
         if(err){
             return res.status(400);
         }else{
-            return res.status(201).send({data}
+            return res.status(201).send(
+                data
             )
         }
     })   

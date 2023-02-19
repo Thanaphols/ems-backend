@@ -17,6 +17,51 @@ router.get('/users',(req,res)=>{
     })
 })
 
+router.get('/users/not',(req,res)=>{
+    db.query(`SELECT * FROM user WHERE u_stat  = "NotApproved" `,
+    (err,data)=>{
+        if(err){
+            return res.status(400);
+        }else{
+            return res.status(201).send(
+                data,
+                {  
+                total:data.length }
+                )
+        }
+    })
+})
+
+router.get('/users/app',(req,res)=>{
+    db.query(`SELECT * FROM user WHERE u_stat  = "Approved" `,
+    (err,data)=>{
+        if(err){
+            return res.status(400);
+        }else{
+            return res.status(201).send(
+                data,
+                {  
+                total:data.length }
+                )
+        }
+    })
+})
+
+router.get('/users/admin',(req,res)=>{
+    db.query(`SELECT * FROM user WHERE u_stat  = "Admin" `,
+    (err,data)=>{
+        if(err){
+            return res.status(400);
+        }else{
+            return res.status(201).send(
+                data,
+                {  
+                total:data.length }
+                )
+        }
+    })
+})
+
 //เรียกข้อมูล User จาก ID
 router.get('/user/:id',(req,res)=>{
     const id = req.params.id;
