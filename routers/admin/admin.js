@@ -274,5 +274,20 @@ router.delete(`/admin/deUser/:id`,(req,res)=>{
     
 })
 
+router.delete(`/borrow/dereturn/:id`,(req,res)=>{
+    const  b_id= req.params.id;
+     db.query(`delete from borrow where b_id = ${b_id} `,
+     (err,result)=>{
+         if(err){
+            return res.status(400).send({
+                 code: err.code,
+                 message: err.message
+             })
+         }
+         return res.status(201).send({ message: "Delete Return list successfully"
+        })
+     })
+ })
+
 module.exports = router;
 
